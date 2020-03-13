@@ -81,10 +81,9 @@ class Anime:
                         self.df.at[indeks, kolumna] = nowa_wartosc
                         self.df.to_csv(self.filename, index=False)
                         print("Zmieniono")
-                    except ValueError:  # do poprawy \/
-                        print("Błędne wartości")
-                    except KeyError:
-                        print("Błędne wartości")  # do poprawy /\
+                    except ValueError:
+                        print("Błęda wartość")
+
         else:
             print("Tytuł nie znajduje się na liście")
 
