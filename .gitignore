@@ -134,7 +134,4 @@ dmypy.json
 .pytype/
 
 
-venv/*
-/venv/
 /venv
-venv/
