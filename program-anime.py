@@ -25,20 +25,19 @@ class Anime:
             tytul = tytul.lower()
             for x in self.df['tytul']:
                 if tytul == x.lower():
-                    return True
-                else:
                     print("Anime istnieje")
                     break
+                else:
+                    sezony = input("Podaj liczbę sezonów: ")
+                    odcinki = input("Podaj liczbę odcinków: ")
+                    gatunek = input("Podaj gatunek: ")
+                    rokpremiery = input("Podaj rok premiery: ")
+                    data = {'tytul': tytul, 'sezony': sezony, 'odcinki': odcinki, 'gatunek': gatunek,
+                            'rokpremiery': rokpremiery}  # tworzy nowy row z danymi
+                    self.df.append(data, ignore_index=True)  # dodaje row do DataFrame
+                    self.df.to_csv(self.filename, index=False)  # dodaje DataFrame do pliku
         except KeyError:
             pass
-        sezony = input("Podaj liczbę sezonów: ")
-        odcinki = input("Podaj liczbę odcinków: ")
-        gatunek = input("Podaj gatunek: ")
-        rokpremiery = input("Podaj rok premiery: ")
-        data = {'tytul': tytul, 'sezony': sezony, 'odcinki': odcinki, 'gatunek': gatunek,
-                'rokpremiery': rokpremiery}  # tworzy nowy row z danymi
-        self.df.append(data, ignore_index=True)  # dodaje row do DataFrame
-        self.df.to_csv(self.filename, index=False)  # dodaje DataFrame do pliku
 
     def search_anime(self):
         tytul = input("Podaj tytuł anime którego szukasz: ")
