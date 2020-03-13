@@ -76,3 +76,21 @@ class Anime:
 
 
 anime = Anime('lista_anime.csv')
+
+while True:
+
+    print("\n1. Pokaż wszystkie anime\n2. Dodaj anime\n3. Usun anime\n4. Edytuj anime\n5. Szukaj anime\n6. Exit")
+    wybor = input()
+    if wybor == '1':
+        anime.show_all()
+    elif wybor == '2':
+        anime.add_anime()
+    elif wybor == '3':
+        anime.remove_anime()
+    elif wybor == '4':
+        anime.edit_anime()
+    elif wybor == '5':
+        anime.search_anime()
+    elif wybor == '6':
+        print("Do widzenia")
+        break
