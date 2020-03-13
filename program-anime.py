@@ -87,7 +87,7 @@ class Anime:
                         print("Błędne wartości")  # do poprawy /\
         else:
             print("Tytuł nie znajduje się na liście")
-# x
+
 
 anime = Anime('lista_anime.csv')
 
