@@ -5,39 +5,44 @@ class Anime:
 
     def __init__(self, filename):
         self.filename = filename
-        self.check_file()
+        self.check_file()  # sprawdza, czy plik istnieje. Jeśli nie, tworzy nowy.
+        self.kolumny = ['tytul', 'sezony', 'odcinki', 'gatunek', 'rokpremiery']
+        self.columns = dict(tytul=[], sezony=[], odcinki=[], gatunek=[], rokpremiery=[])  # lista kolumn
 
     def check_file(self):
         try:
             self.df = pd.read_csv(self.filename)  # czyta plik
         except FileNotFoundError:
-            columns = dict(tytul=[], sezony=[], odcinki=[], gatunek=[], rokpremiery=[])  # lista kolumn
-            nowy_plik = pd.DataFrame(columns)  # tworzy DataFrame z kolumnami
+            # columns = dict(tytul=[], sezony=[], odcinki=[], gatunek=[], rokpremiery=[])  # lista kolumn
+            nowy_plik = pd.DataFrame(self.columns)  # tworzy DataFrame z kolumnami
             nowy_plik.to_csv(self.filename, index=False)  # dodaje DataFrame do pliku
             print("Tworzę nowy plik")
 
     def show_all(self):
         print(self.df)  # printuje DataFrame z pliku
 
+    def if_anime_in_file(self, tytul):
+        tytul = tytul.lower()
+        for x in self.df['tytul']:
+            if tytul == x.lower():
+                return True
+            else:
+                continue
+
     def add_anime(self):
         tytul = input("Podaj tytuł: ")
-        try:
-            tytul = tytul.lower()
-            for x in self.df['tytul']:
-                if tytul == x.lower():
-                    print("Anime istnieje")
-                    break
-                else:
-                    sezony = input("Podaj liczbę sezonów: ")
-                    odcinki = input("Podaj liczbę odcinków: ")
-                    gatunek = input("Podaj gatunek: ")
-                    rokpremiery = input("Podaj rok premiery: ")
-                    data = {'tytul': tytul, 'sezony': sezony, 'odcinki': odcinki, 'gatunek': gatunek,
-                            'rokpremiery': rokpremiery}  # tworzy nowy row z danymi
-                    self.df.append(data, ignore_index=True)  # dodaje row do DataFrame
-                    self.df.to_csv(self.filename, index=False)  # dodaje DataFrame do pliku
-        except KeyError:
-            pass
+        if self.if_anime_in_file(tytul):
+            print("Anime istnieje")
+        else:
+            sezony = input("Podaj liczbę sezonów: ")
+            odcinki = input("Podaj liczbę odcinków: ")
+            gatunek = input("Podaj gatunek: ")
+            rokpremiery = input("Podaj rok premiery: ")
+            data = {'tytul': tytul, 'sezony': sezony, 'odcinki': odcinki, 'gatunek': gatunek,
+                    'rokpremiery': rokpremiery}  # tworzy nowy row z danymi
+            self.df = self.df.append(data, ignore_index=True)  # dodaje row do DataFrame
+            self.df.to_csv(self.filename, index=False)  # dodaje DataFrame do pliku
+            print("Dodano")
 
     def search_anime(self):
         tytul = input("Podaj tytuł anime którego szukasz: ")
@@ -51,30 +56,41 @@ class Anime:
     def remove_anime(self):
         try:
             tytul = input("Podaj tytuł anime, które chcesz usunąć z listy: ")
-            self.df.drop(tytul, axis=0, inplace=True)
-            self.df.to_csv(self.filename)
+            self.df.drop(tytul, axis=0, inplace=True)  # usuwa tytuł wraz z pozostałymi danymi z DataFrame
+            self.df.to_csv(self.filename)  # dodaje nowy DataFrame do pliku
             print("Usunięto.")
         except KeyError:
             print("Nie znaleziono takiego anime")
 
     def edit_anime(self):
         tytul = input("Podaj tytuł anime w którym chcesz coś zmienić: ")
-        kolumna = input("W której kolumnie chcesz coś zmienić? (tytul, sezony, odcinki, gatunek, rokpremiery): ")
-        nowa_wartosc = input("Podaj nową wartość: ")
-        tytul = tytul.lower()
-        # self.df['tytul'].str.lower()
-        indeks = self.df.loc[self.df['tytul'].str.lower() == tytul].index.values.astype(int)[0]
-        try:
-            self.df.at[indeks, kolumna] = nowa_wartosc
-            self.df.to_csv(self.filename, index=False)
-            print("Zmieniono")
-        except ValueError:
-            print("Błędne wartości")
-        except KeyError:
-            print("Błędne wartości")
+
+        if self.if_anime_in_file(tytul):
+            if tytul in self.kolumny:
+                print("Nie możesz zmienić nazw kolumn")
+            else:
+                kolumna = input("W której kolumnie chcesz coś zmienić? (tytul, sezony, odcinki, gatunek, rokpremiery): ")
+                if kolumna not in self.kolumny:
+                    print("Zła kolumna")
+                else:
+                    nowa_wartosc = input("Podaj nową wartość: ")
+                    tytul = tytul.lower()
+                    # self.df['tytul'].str.lower()
+                    indeks = self.df.loc[self.df['tytul'].str.lower() == tytul].index.values.astype(int)[0]
+                    try:
+                        self.df.at[indeks, kolumna] = nowa_wartosc
+                        self.df.to_csv(self.filename, index=False)
+                        print("Zmieniono")
+                    except ValueError:  # do poprawy \/
+                        print("Błędne wartości")
+                    except KeyError:
+                        print("Błędne wartości")  # do poprawy /\
+        else:
+            print("Tytuł nie znajduje się na liście")
 
 
 anime = Anime('lista_anime.csv')
+
 
 while True:
 
