@@ -1,33 +1,39 @@
 import pandas as pd
 
-
+columns = dict(tytul=[], sezony=[], odcinki=[], gatunek=[], rokpremiery=[])  # lista kolumn
 class Anime:
 
     def __init__(self, filename):
         self.filename = filename
         self.check_file()  # sprawdza, czy plik istnieje. Jeśli nie, tworzy nowy.
         self.kolumny = ['tytul', 'sezony', 'odcinki', 'gatunek', 'rokpremiery']
-        self.columns = dict(tytul=[], sezony=[], odcinki=[], gatunek=[], rokpremiery=[])  # lista kolumn
+        #self.columns = dict(tytul=[], sezony=[], odcinki=[], gatunek=[], rokpremiery=[])  # lista kolumn
 
     def check_file(self):
         try:
             self.df = pd.read_csv(self.filename)  # czyta plik
         except FileNotFoundError:
             # columns = dict(tytul=[], sezony=[], odcinki=[], gatunek=[], rokpremiery=[])  # lista kolumn
-            nowy_plik = pd.DataFrame(self.columns)  # tworzy DataFrame z kolumnami
+            nowy_plik = pd.DataFrame(columns)  # tworzy DataFrame z kolumnami
             nowy_plik.to_csv(self.filename, index=False)  # dodaje DataFrame do pliku
             print("Tworzę nowy plik")
 
     def show_all(self):
-        print(self.df)  # printuje DataFrame z pliku
+        try:
+            print(self.df)  # printuje DataFrame z pliku
+        except AttributeError:
+            print("Brak rekordów")
 
     def if_anime_in_file(self, tytul):
         tytul = tytul.lower()
-        for x in self.df['tytul']:
-            if tytul == x.lower():
-                return True
-            else:
-                continue
+        try:
+            for x in self.df['tytul']:
+                if tytul == x.lower():
+                    return True
+                else:
+                    continue
+        except AttributeError:
+            pass
 
     def add_anime(self):
         tytul = input("Podaj tytuł: ")
@@ -75,7 +81,6 @@ class Anime:
                 else:
                     nowa_wartosc = input("Podaj nową wartość: ")
                     tytul = tytul.lower()
-                    # self.df['tytul'].str.lower()
                     indeks = self.df.loc[self.df['tytul'].str.lower() == tytul].index.values.astype(int)[0]
                     try:
                         self.df.at[indeks, kolumna] = nowa_wartosc
